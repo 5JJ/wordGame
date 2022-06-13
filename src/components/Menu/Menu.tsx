@@ -1,5 +1,5 @@
-import React, { useEffect, useState, useMemo, useCallback } from "react";
-import { Link } from "react-router-dom";
+import useClickOutside from "hooks/useClickOutside";
+import React, { useState, useMemo, useCallback, useEffect } from "react";
 import styled from "styled-components";
 
 import MenuProps from "./Menu.types";
@@ -29,13 +29,18 @@ function Menu(props: MenuProps) {
   const [toggled, setToggled] = useState<boolean>(false);
   const [listRendered, setListRendered] = useState<boolean>(false);
 
+  const callbackMemo = useCallback(() => {
+    setToggled(false);
+  }, []);
+  const ref = useClickOutside<HTMLDivElement>(callbackMemo);
+
   const { selectedItem, menuList } = props;
 
-  function handleClick() {
+  function toggleList() {
     setToggled(!toggled);
   }
 
-  const isRendered = useCallback((check) => {
+  const isRendered = useCallback((check: boolean) => {
     setListRendered(check);
   }, []);
 
@@ -53,18 +58,25 @@ function Menu(props: MenuProps) {
     [menuList, selectedItem]
   );
 
+  useEffect(() => {
+    if (!toggled) {
+      setListRendered(false);
+    }
+  }, [toggled]);
+
   return (
-    <MenuContainer>
-      <SelectedItem onClick={handleClick}>{list[0]?.name}</SelectedItem>
-      <MenuListContainer renderList={listRendered}>
-        {toggled && (
+    <MenuContainer ref={ref}>
+      <SelectedItem onClick={toggleList}>{list[0]?.name}</SelectedItem>
+
+      {toggled && (
+        <MenuListContainer renderList={listRendered}>
           <MenuList
             menuList={list}
             selectedItem={selectedItem}
             isRendered={isRendered}
           />
-        )}
-      </MenuListContainer>
+        </MenuListContainer>
+      )}
     </MenuContainer>
   );
 }
