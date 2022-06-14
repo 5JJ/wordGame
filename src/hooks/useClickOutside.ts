@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { MouseEventHandler, useEffect, useRef } from "react";
 
 type callbackType = () => void;
 
@@ -8,8 +8,12 @@ export default function useClickOutside<T extends HTMLElement>(
   const ref = useRef<T>(null);
 
   useEffect(() => {
-    const handleOutsideClick = (event) => {
-      if (ref && ref.current && !ref.current.contains(event.target)) {
+    const handleOutsideClick: EventListener = (event) => {
+      if (
+        ref &&
+        ref.current &&
+        !ref.current.contains(event.target as HTMLElement)
+      ) {
         callback();
       }
     };
