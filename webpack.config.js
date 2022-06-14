@@ -14,6 +14,9 @@ module.exports = {
     port: 3001,
     hot: true,
     historyApiFallback: true,
+    static: {
+      directory: path.resolve(__dirname, "src/assets"),
+    },
   },
   plugins: [
     new webpack.EnvironmentPlugin({
