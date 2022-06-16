@@ -6,8 +6,9 @@ const path = require("path");
 module.exports = {
   entry: "./src/index.tsx",
   output: {
-    filename: "test.js",
+    filename: "main.js",
     path: path.resolve(__dirname, "dist"),
+    clean: true,
   },
   mode: process.env.NODE_ENV,
   devServer: {
