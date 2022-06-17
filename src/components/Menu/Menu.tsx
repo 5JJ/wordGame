@@ -66,7 +66,9 @@ function Menu(props: MenuProps) {
 
   return (
     <MenuContainer ref={ref}>
-      <SelectedItem onClick={toggleList}>{list[0]?.name}</SelectedItem>
+      <SelectedItem onClick={toggleList} tabIndex={0}>
+        {list[0]?.name}
+      </SelectedItem>
 
       {toggled && (
         <MenuListContainer renderList={listRendered}>
