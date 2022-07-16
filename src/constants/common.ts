@@ -6,7 +6,7 @@ export const GAME_LIST_IN_KR = {
   [GAME_HANGMAN]: "행맨",
 };
 
-export const KEY_ENTER = "enter";
+export const KEY_ENTER = "enter"; 
 export const KEY_BACKSPACE = "backspace";
 
 export const BLOCK_RESULT = {
