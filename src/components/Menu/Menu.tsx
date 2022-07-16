@@ -6,11 +6,11 @@ import MenuProps from "./Menu.types";
 
 import MenuList from "./MenuList";
 
-const MenuListContainer = styled.ul<{ renderList: boolean }>`
+const MenuListContainer = styled.ul<{ isListRendered: boolean }>`
   position: absolute;
   top: 0;
   transition: transform 0.4s ease-in-out;
-  transform: scaleY(${(props) => (props.renderList ? "1" : "0")});
+  transform: scaleY(${(props) => (props.isListRendered ? "1" : "0")});
   width: 80%;
   box-shadow: 1px 2px 5px 0px grey;
   background-color: white;
@@ -40,7 +40,7 @@ function Menu(props: MenuProps) {
     setToggled(!toggled);
   }
 
-  const isRendered = useCallback((check: boolean) => {
+  const updateListRendered = useCallback((check: boolean) => {
     setListRendered(check);
   }, []);
 
@@ -66,16 +66,24 @@ function Menu(props: MenuProps) {
 
   return (
     <MenuContainer ref={ref}>
-      <SelectedItem onClick={toggleList} tabIndex={0}>
+      <SelectedItem
+        onClick={toggleList}
+        tabIndex={0}
+        onKeyUp={(event) => {
+          if (event.key === "ArrowDown") {
+            toggleList();
+          }
+        }}
+      >
         {list[0]?.name}
       </SelectedItem>
 
       {toggled && (
-        <MenuListContainer renderList={listRendered}>
+        <MenuListContainer isListRendered={listRendered}>
           <MenuList
             menuList={list}
             selectedItem={selectedItem}
-            isRendered={isRendered}
+            callbackAfterRendering={updateListRendered}
           />
         </MenuListContainer>
       )}

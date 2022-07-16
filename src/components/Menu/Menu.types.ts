@@ -4,7 +4,7 @@ interface MenuProps {
 }
 
 export type MenuListProps = MenuProps & {
-  isRendered: (check: boolean) => void;
+  callbackAfterRendering: (check: boolean) => void;
 };
 
 export type MenuListItemProps = { isSelected: boolean };
