@@ -49,15 +49,15 @@ const KeyboardContainer = styled.div(({}) => ({
 }));
 
 function QwetyKeyboard(props: QwetyKeyboardType) {
-  const { clickCallback } = props;
+  const { onKeyInputCallback } = props;
 
   const handleClick: onClickFnType = (value) => {
-    clickCallback(value);
+    onKeyInputCallback(value);
   };
 
   return (
     <KeyboardContainer>
-      {QWETY_ALPHABETS.map((list, index) => (
+      {QWETY_ALPHABETS.map((alphabetList, index) => (
         <div key={index}>
           {index === 2 && (
             <BackSpaceKeycap
@@ -66,7 +66,7 @@ function QwetyKeyboard(props: QwetyKeyboardType) {
               onClick={() => handleClick(KEY_BACKSPACE)}
             ></BackSpaceKeycap>
           )}
-          {list.map((alphabet: keycapType) => (
+          {alphabetList.map((alphabet: keycapType) => (
             <Keycap
               type="button"
               tabIndex={0}

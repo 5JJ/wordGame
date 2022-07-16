@@ -6,7 +6,7 @@ import {
 } from "constants/common";
 
 interface QwetyKeyboardType {
-  clickCallback: (value: keycapType) => void;
+  onKeyInputCallback: (value: keycapType) => void;
 }
 
 export type onClickFnType = (value: keycapType) => void;
