@@ -16,4 +16,16 @@ export const findAllIndexes: findAllIndexesType = (arr, callback) =>
     return acc;
   }, []);
 
+type padZeroType = (str: string, maxLength: number) => string;
+
+export const padZero: padZeroType = (str, maxLength) => {
+  const zeroCount = str.length - maxLength;
+
+  if (zeroCount > 0) {
+    return `${"0".repeat(zeroCount)}${str}`;
+  }
+
+  return str;
+};
+
 export default {};
