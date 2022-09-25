@@ -7,6 +7,7 @@ import {
 
 interface QwetyKeyboardType {
   onKeyInputCallback: (value: keycapType) => void;
+  freeze?: boolean;
 }
 
 export type onClickFnType = (value: keycapType) => void;

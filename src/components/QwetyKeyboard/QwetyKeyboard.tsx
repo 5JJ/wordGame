@@ -26,6 +26,10 @@ const Keycap = styled.button(({}) => ({
   fontWeight: "600",
   cursor: "pointer",
   backgroundColor: "lightgrey",
+
+  "&:disabled": {
+    color: "inherit",
+  },
 }));
 
 const backgroundCSS = {
@@ -49,7 +53,7 @@ const KeyboardContainer = styled.div(({}) => ({
 }));
 
 function QwetyKeyboard(props: QwetyKeyboardType) {
-  const { onKeyInputCallback } = props;
+  const { onKeyInputCallback, freeze } = props;
 
   const handleClick: onClickFnType = (value) => {
     onKeyInputCallback(value);
@@ -64,6 +68,7 @@ function QwetyKeyboard(props: QwetyKeyboardType) {
               type="button"
               tabIndex={0}
               onClick={() => handleClick(KEY_BACKSPACE)}
+              disabled={freeze}
             ></BackSpaceKeycap>
           )}
           {alphabetList.map((alphabet: keycapType) => (
@@ -72,6 +77,7 @@ function QwetyKeyboard(props: QwetyKeyboardType) {
               tabIndex={0}
               key={alphabet}
               onClick={() => handleClick(alphabet)}
+              disabled={freeze}
             >
               {alphabet}
             </Keycap>
@@ -81,6 +87,7 @@ function QwetyKeyboard(props: QwetyKeyboardType) {
               type="button"
               tabIndex={0}
               onClick={() => handleClick(KEY_ENTER)}
+              disabled={freeze}
             ></EnterKeycap>
           )}
         </div>

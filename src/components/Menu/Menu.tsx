@@ -17,12 +17,20 @@ const MenuListContainer = styled.ul<{ isListRendered: boolean }>`
 `;
 
 const MenuContainer = styled.div(({}) => ({
+  paddingBottom: 8,
   position: "relative",
   cursor: "pointer",
 }));
 
 const SelectedItem = styled.span(({}) => ({
-  fontSize: "16px",
+  paddingLeft: 8,
+  paddingRight: 20,
+  fontWeight: "bold",
+  fontSize: "20px",
+  backgroundImage: 'url("./icons/caret-down.png")',
+  backgroundRepeat: "no-repeat",
+  backgroundPosition: "right",
+  backgroundSize: "10px",
 }));
 
 function Menu(props: MenuProps) {
@@ -39,6 +47,10 @@ function Menu(props: MenuProps) {
   function toggleList() {
     setToggled(!toggled);
   }
+
+  const closeList = useCallback(() => {
+    setToggled(false);
+  }, []);
 
   const updateListRendered = useCallback((check: boolean) => {
     setListRendered(check);
@@ -79,11 +91,12 @@ function Menu(props: MenuProps) {
       </SelectedItem>
 
       {toggled && (
-        <MenuListContainer isListRendered={listRendered}>
+        <MenuListContainer isListRendered={listRendered} tabIndex={0}>
           <MenuList
             menuList={list}
             selectedItem={selectedItem}
             callbackAfterRendering={updateListRendered}
+            closeList={closeList}
           />
         </MenuListContainer>
       )}

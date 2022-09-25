@@ -12,6 +12,10 @@ const MenuListItem = styled.li<MenuListItemProps>(({ isSelected }) => ({
 
   ...(isSelected && {
     color: "grey",
+    backgroundImage: 'url("./icons/caret-left.png")',
+    backgroundRepeat: "no-repeat",
+    backgroundSize: "12px",
+    backgroundPosition: "calc(50% + 24px)",
   }),
   "&:focus": {
     backgroundColor: "#ddd",
@@ -24,7 +28,7 @@ const StyledLink = styled(Link)(({}) => ({
 }));
 
 function MenuList(props: MenuListProps) {
-  const { menuList, selectedItem, callbackAfterRendering } = props;
+  const { menuList, selectedItem, callbackAfterRendering, closeList } = props;
   const focusedItemRef = useRef<HTMLLIElement>(null);
   const navigate = useNavigate();
 
@@ -52,18 +56,22 @@ function MenuList(props: MenuListProps) {
   };
 
   const onKeyUp = (event: React.KeyboardEvent<HTMLLIElement>, link: string) => {
-    if (event.key === "ArrowDown") {
-      focusNextItem();
-    } else if (event.key === "ArrowUp") {
-      focusPrevItem();
-    } else if (event.key === "Enter") {
-      goFocusedItemPage(link);
+    switch (event.key) {
+      case "ArrowDown":
+        focusNextItem();
+        break;
+      case "ArrowUp":
+        focusPrevItem();
+        break;
+      case "Enter":
+        goFocusedItemPage(link);
+        break;
+      case "Escape":
+        closeList();
+        break;
+      default:
+        break;
     }
-  };
-
-  const onMouseEnter: React.MouseEventHandler<HTMLLIElement> = (event) => {
-    focusedItemRef.current = event.target as HTMLLIElement;
-    focusedItemRef.current.focus();
   };
 
   useEffect(() => {
@@ -82,10 +90,11 @@ function MenuList(props: MenuListProps) {
             isSelected={isSelected}
             ref={isSelected ? focusedItemRef : undefined}
             onKeyUp={(event) => onKeyUp(event, link)}
-            onMouseEnter={onMouseEnter}
             tabIndex={0}
           >
-            <StyledLink to={`/${link}`}>{name}</StyledLink>
+            <StyledLink to={`/${link}`} tabIndex={-1}>
+              {name}
+            </StyledLink>
           </MenuListItem>
         );
       })}
