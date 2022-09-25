@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 
 import QwetyKeyboard from "components/QwetyKeyboard";
 import Menu from "components/Menu";
@@ -16,10 +16,10 @@ import {
 import styled from "styled-components";
 import useAnswer from "hooks/useAnswer";
 
+type valueType = string[][];
+
 const DEFAULT_BLOCK_ROW_COUNT = 6;
 const DEFAULT_BLOCK_COLUMN_COUNT = 6;
-
-type valueType = string[][];
 
 const WordBlockList = styled.div(({}) => ({}));
 
@@ -33,15 +33,20 @@ export default function Kordle() {
     []
   );
 
-  const { answer } = useAnswer("kordle");
-  const answerArr = answer.split("");
+  const { answer, log, result, saveLog, saveResult } =
+    useAnswer<"kordle">("kordle");
 
-  const [selectedRow, setSelectedRow] = useState(0);
+  const answerArr = useMemo(() => {
+    console.log("answer => ", answer);
+    return answer.split("");
+  }, [answer]);
+
+  const [selectedRow, setSelectedRow] = useState(log.length);
   const [selectedCol, setSelectedCol] = useState(0);
-  const [values, setValues] = useState<valueType>(setValuesState());
-  const [valuesResult, setValuesResult] = useState<valueType>(setValuesState());
-
-  const freeze = selectedCol < 0 || selectedRow < 0;
+  const [values, setValues] = useState<valueType>(() => setValuesState(log));
+  const [finished, setFinished] = useState<boolean>(
+    !!result || log.length >= DEFAULT_BLOCK_ROW_COUNT
+  );
 
   function checkAnswer(): boolean {
     const inputStr = values[selectedRow].join("");
@@ -57,36 +62,12 @@ export default function Kordle() {
     return !values[selectedRow].some((value) => !value);
   }
 
-  function updateValuesResult() {
-    const currentRow = values[selectedRow];
-
-    const result = currentRow.map((value, index) => {
-      if (answerArr[index] === value) {
-        return BLOCK_RESULT.CORRECT;
-      }
-      const foundIndex = answerArr.findIndex((item) => item === value);
-
-      return foundIndex >= 0 ? BLOCK_RESULT.MISMATCH : BLOCK_RESULT.FAILED;
-    });
-
-    const copiedValuesResult = getCopiedArr(valuesResult);
-    copiedValuesResult[selectedRow] = result;
-
-    setValuesResult(copiedValuesResult);
-  }
-
-  function setValuesState(): valueType {
-    return loop<string[]>(DEFAULT_BLOCK_ROW_COUNT, () =>
-      new Array(DEFAULT_BLOCK_COLUMN_COUNT).fill("")
+  function setValuesState(initialValues?: valueType): valueType {
+    return loop<string[]>(DEFAULT_BLOCK_ROW_COUNT, (index) =>
+      initialValues && initialValues[index]
+        ? [...initialValues[index]]
+        : new Array(DEFAULT_BLOCK_COLUMN_COUNT).fill("")
     );
-  }
-
-  function getCopiedArr(targetArr: valueType): valueType {
-    return targetArr.reduce((acc: valueType, row: string[]) => {
-      acc.push([...row]);
-
-      return acc;
-    }, []);
   }
 
   function getNewValuesState(
@@ -104,10 +85,13 @@ export default function Kordle() {
   }
 
   function handleSuccess() {
-    updateValuesResult();
-    alert("SUCCESS");
-    setSelectedCol(-1);
-    setSelectedRow(-1);
+    console.log("success");
+    moveToNextRow();
+    saveResult("success");
+  }
+
+  function handleFailed() {
+    saveResult("failed");
   }
 
   function moveToNextCol() {
@@ -129,14 +113,26 @@ export default function Kordle() {
     }
   }
 
+  const getStatus = useCallback(
+    (colIndex, value) => {
+      if (answerArr[colIndex] === value) {
+        return BLOCK_RESULT.CORRECT;
+      }
+      const foundIndex = answerArr.findIndex((item) => item === value);
+      return foundIndex >= 0 ? BLOCK_RESULT.MISMATCH : BLOCK_RESULT.FAILED;
+    },
+    [answerArr]
+  );
+
   function onKeyClick(value: string) {
     if (value === KEY_ENTER) {
       // check result
       if (checkAllBlanksFilled()) {
+        saveLog(values[selectedRow]);
+
         if (checkAnswer()) {
           handleSuccess();
         } else {
-          updateValuesResult();
           moveToNextRow();
         }
       } else {
@@ -156,10 +152,19 @@ export default function Kordle() {
   }
 
   useEffect(() => {
-    if (selectedRow === DEFAULT_BLOCK_ROW_COUNT) {
+    if (selectedRow >= DEFAULT_BLOCK_ROW_COUNT) {
       console.log("FAILED");
+      handleFailed();
     }
   }, [selectedRow]);
+
+  useEffect(() => {
+    if (result) {
+      console.log("Result", result);
+      setFinished(true);
+      // controll dialog
+    }
+  }, [result]);
 
   return (
     <>
@@ -172,16 +177,21 @@ export default function Kordle() {
                 key={`${rowIndex}-${colIndex}`}
                 value={values[rowIndex][colIndex]}
                 isSelected={
-                  rowIndex === selectedRow && colIndex === selectedCol
+                  !finished &&
+                  rowIndex === selectedRow &&
+                  colIndex === selectedCol
                 }
-                status={valuesResult[rowIndex][colIndex]}
+                status={
+                  rowIndex < selectedRow &&
+                  getStatus(colIndex, values[rowIndex][colIndex])
+                }
               />
             ))}
           </WordBlockList>
         ))}
       </div>
 
-      <QwetyKeyboard onKeyInputCallback={onKeyClick} freeze={freeze} />
+      <QwetyKeyboard onKeyInputCallback={onKeyClick} freeze={finished} />
     </>
   );
 }

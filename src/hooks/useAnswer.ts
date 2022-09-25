@@ -1,5 +1,5 @@
 import { GAME_HANGMAN, GAME_KORDLE } from "constants/common";
-import { useEffect, useState } from "react";
+import { useMemo, useState } from "react";
 
 import KordleAnswers from "data/kordle_answers.json";
 import HangmanAnswers from "data/hangman_answer.json";
@@ -8,22 +8,29 @@ const KEY_ANSWER = "answer";
 const START_DATE = "2022/06/18";
 const START_DATE_TIME = new Date(START_DATE).getTime();
 
-type AnswerDataType = {
+type KordleLogType = string[][];
+type HangmanLogType = string[];
+type ResultType = "success" | "failed";
+
+type AnswerDataType<T extends AnswerType> = {
   answer: string;
   date: Date;
-};
-const DEFAULT_ANSWER_DATA: AnswerDataType = {
-  answer: "",
-  date: new Date(),
+  log: T extends "kordle" ? KordleLogType : HangmanLogType;
+  result?: ResultType;
 };
 
 type AnswerType = typeof GAME_HANGMAN | typeof GAME_KORDLE;
 
-export default function useAnswer(type: AnswerType) {
-  const [answerData, setAnswerData] =
-    useState<AnswerDataType>(DEFAULT_ANSWER_DATA);
+export default function useAnswer<T extends AnswerType>(type: T) {
+  const [answerData, setAnswerData] = useState<AnswerDataType<T>>(() =>
+    setData(type)
+  );
 
-  const _getTodayAnswer = (type: AnswerType) => {
+  function _setItem(value: AnswerDataType<T>) {
+    localStorage.setItem(`${type}_${KEY_ANSWER}`, JSON.stringify(value));
+  }
+
+  function getTodayAnswer(type: T) {
     const answersLength =
       type === "kordle" ? KordleAnswers.length : HangmanAnswers.length;
 
@@ -34,27 +41,39 @@ export default function useAnswer(type: AnswerType) {
       index = Math.floor(Math.random() * (answersLength - 1));
     }
     return type === "kordle" ? KordleAnswers[index] : HangmanAnswers[index];
-  };
-
-  function _setItem(value: string) {
-    localStorage.setItem(`${type}_${KEY_ANSWER}`, value);
   }
 
-  function _getTodayDate() {
-    const now = new Date(Date.now());
-    return `${now.getFullYear()}/${now.getMonth() + 1}/${now.getDate()}`;
+  function setData(type: T) {
+    const storedData = _getItem(type);
+    const today = new Date(Date.now());
+
+    if (storedData && _compareDate(today, storedData.date)) {
+      return storedData;
+    } else {
+      const newAnswerData = {
+        answer: getTodayAnswer(type),
+        date: today,
+        log: [],
+      };
+      _setItem(newAnswerData);
+      return newAnswerData;
+    }
   }
 
-  function _getItem(type: AnswerType): AnswerDataType | null {
+  function _checkValidDate(date: Date) {
+    return !isNaN(date.getTime());
+  }
+
+  function _getItem(type: AnswerType): AnswerDataType<T> | null {
     const data = localStorage.getItem(`${type}_${KEY_ANSWER}`);
 
     if (!data) {
       return null;
     }
 
-    const parsedData: AnswerDataType = JSON.parse(data);
+    const parsedData: AnswerDataType<T> = JSON.parse(data);
 
-    if (parsedData && parsedData.date && parsedData.answer) {
+    if (parsedData && parsedData.date && parsedData.answer && parsedData.log) {
       const date = new Date(parsedData.date);
 
       if (!_checkValidDate(date)) {
@@ -62,7 +81,7 @@ export default function useAnswer(type: AnswerType) {
       }
 
       return {
-        answer: parsedData.answer,
+        ...parsedData,
         date,
       };
     }
@@ -70,38 +89,40 @@ export default function useAnswer(type: AnswerType) {
     return null;
   }
 
-  const _compareDate = (date1: Date, date2: Date): boolean => {
+  function _compareDate(date1: Date, date2: Date): boolean {
     return (
       date1.getDate() === date2.getDate() &&
       date1.getMonth() === date2.getMonth() &&
       date1.getFullYear() === date2.getFullYear()
     );
-  };
+  }
 
-  const _checkValidDate = (date: Date) => !isNaN(date.getTime());
+  const values = useMemo(
+    () => ({
+      ...answerData,
+      saveLog: (newLog: string | string[]) => {
+        setAnswerData((prevData) => {
+          const newData = {
+            ...prevData,
+            log: [...answerData.log, newLog] as AnswerDataType<T>["log"],
+          };
+          _setItem(newData);
+          return newData;
+        });
+      },
+      saveResult: (result: ResultType) => {
+        setAnswerData((prevData) => {
+          const newData = {
+            ...prevData,
+            result,
+          };
+          _setItem(newData);
+          return newData;
+        });
+      },
+    }),
+    [answerData]
+  );
 
-  const updateData = (type: AnswerType) => {
-    const storedData = _getItem(type);
-    const today = new Date(Date.now());
-
-    console.log("storedData", storedData);
-    if (storedData && _compareDate(today, storedData.date)) {
-      setAnswerData(storedData);
-    } else {
-      console.log("=== update stored Data =====");
-      const newAnswerData = {
-        answer: _getTodayAnswer(type),
-        date: today,
-      };
-
-      setAnswerData(newAnswerData);
-      _setItem(JSON.stringify(newAnswerData));
-    }
-  };
-
-  useEffect(() => {
-    updateData(type);
-  }, [type]);
-
-  return answerData;
+  return values;
 }
