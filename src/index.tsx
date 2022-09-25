@@ -1,13 +1,15 @@
 import React from "react";
-import { render } from "react-dom";
+import { createRoot } from "react-dom/client";
 
 import GlobalStyle from "./styles/GlobalStyle";
 import App from "App";
 
-render(
+const container = document.getElementById("main");
+const root = createRoot(container);
+
+root.render(
   <>
     <GlobalStyle />
     <App />
-  </>,
-  document.querySelector("#main")
+  </>
 );
