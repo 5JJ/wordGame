@@ -22,6 +22,9 @@ const DEFAULT_BLOCK_ROW_COUNT = 6;
 const DEFAULT_BLOCK_COLUMN_COUNT = 6;
 
 const WordBlockList = styled.div(({}) => ({}));
+const WordBlockContainer = styled.div(({}) => ({
+  textAlign: "center",
+}));
 
 export default function Kordle() {
   const gameList = useMemo(
@@ -33,13 +36,8 @@ export default function Kordle() {
     []
   );
 
-  const { answer, log, result, saveLog, saveResult } =
+  const { answer, answerArr, log, result, saveLog, saveResult } =
     useAnswer<"kordle">("kordle");
-
-  const answerArr = useMemo(() => {
-    console.log("answer => ", answer);
-    return answer.split("");
-  }, [answer]);
 
   const [selectedRow, setSelectedRow] = useState(log.length);
   const [selectedCol, setSelectedCol] = useState(0);
@@ -169,7 +167,7 @@ export default function Kordle() {
   return (
     <>
       <Menu selectedItem={GAME_KORDLE} menuList={gameList} />
-      <div>
+      <WordBlockContainer>
         {loop(DEFAULT_BLOCK_ROW_COUNT, (rowIndex) => (
           <WordBlockList key={rowIndex}>
             {loop(DEFAULT_BLOCK_COLUMN_COUNT, (colIndex) => (
@@ -189,7 +187,7 @@ export default function Kordle() {
             ))}
           </WordBlockList>
         ))}
-      </div>
+      </WordBlockContainer>
 
       <QwetyKeyboard onKeyInputCallback={onKeyClick} freeze={finished} />
     </>

@@ -6,6 +6,7 @@ const GloablStyle = createGlobalStyle`
   
   *, *::before, *::after {
     box-sizing: border-box;
+    background-repeat: no-repeat;
   }
 
   body {
@@ -23,6 +24,11 @@ const GloablStyle = createGlobalStyle`
       color: inherit;
       text-decoration: none;
     }
+  }
+  button{
+    border: none;
+    border-radius: 0;
+    box-shadow: none;
   }
 `;
 

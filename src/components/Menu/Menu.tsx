@@ -9,6 +9,7 @@ import MenuList from "./MenuList";
 const MenuListContainer = styled.ul<{ isListRendered: boolean }>`
   position: absolute;
   top: 0;
+  z-index: 100;
   transition: transform 0.4s ease-in-out;
   transform: scaleY(${(props) => (props.isListRendered ? "1" : "0")});
   width: 80%;
