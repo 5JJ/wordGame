@@ -1,21 +1,32 @@
-import { GAME_HANGMAN, GAME_KORDLE } from "constants/common";
+import {
+  GAME_HANGMAN,
+  GAME_KORDLE,
+  KR_CONSONANTS,
+  KR_VOWELS,
+} from "constants/common";
 import { useMemo, useState } from "react";
 
 import KordleAnswers from "data/kordle_answers.json";
 import HangmanAnswers from "data/hangman_answer.json";
+
+import type { AlphabetStatusList } from "pages/hangman/types";
 
 const KEY_ANSWER = "answer";
 const START_DATE = "2022/06/18";
 const START_DATE_TIME = new Date(START_DATE).getTime();
 
 type KordleLogType = string[][];
-type HangmanLogType = string[];
+type HangmanLogType = AlphabetStatusList;
 type ResultType = "success" | "failed";
+
+type LogType<T extends AnswerType> = T extends "kordle"
+  ? KordleLogType
+  : HangmanLogType;
 
 type AnswerDataType<T extends AnswerType> = {
   answer: string;
   date: Date;
-  log: T extends "kordle" ? KordleLogType : HangmanLogType;
+  log: LogType<T>;
   result?: ResultType;
 };
 
@@ -26,7 +37,7 @@ export default function useAnswer<T extends AnswerType>(type: T) {
     setData(type)
   );
 
-  function _setItem(value: AnswerDataType<T>) {
+  function saveItemToLocalStorage(value: AnswerDataType<T>) {
     localStorage.setItem(`${type}_${KEY_ANSWER}`, JSON.stringify(value));
   }
 
@@ -50,12 +61,13 @@ export default function useAnswer<T extends AnswerType>(type: T) {
     if (storedData && _compareDate(today, storedData.date)) {
       return storedData;
     } else {
+      const newAnswer = getTodayAnswer(type);
       const newAnswerData = {
-        answer: getTodayAnswer(type),
+        answer: newAnswer,
         date: today,
-        log: [],
-      };
-      _setItem(newAnswerData);
+        log: type === "kordle" ? [] : {},
+      } as AnswerDataType<T>;
+      saveItemToLocalStorage(newAnswerData);
       return newAnswerData;
     }
   }
@@ -97,16 +109,25 @@ export default function useAnswer<T extends AnswerType>(type: T) {
     );
   }
 
+  function isKordleLog(
+    log: HangmanLogType | KordleLogType
+  ): log is KordleLogType {
+    return Array.isArray(log);
+  }
+
   const values = useMemo(
     () => ({
       ...answerData,
-      saveLog: (newLog: string | string[]) => {
+      answerArr: answerData.answer.split(""),
+      saveLog: (newLog: T extends "kordle" ? string[] : LogType<T>) => {
         setAnswerData((prevData) => {
           const newData = {
             ...prevData,
-            log: [...answerData.log, newLog] as AnswerDataType<T>["log"],
+            log: (isKordleLog(prevData.log)
+              ? [...prevData.log, newLog]
+              : { ...prevData.log, ...newLog }) as LogType<T>,
           };
-          _setItem(newData);
+          saveItemToLocalStorage(newData);
           return newData;
         });
       },
@@ -116,12 +137,12 @@ export default function useAnswer<T extends AnswerType>(type: T) {
             ...prevData,
             result,
           };
-          _setItem(newData);
+          saveItemToLocalStorage(newData);
           return newData;
         });
       },
     }),
-    [answerData]
+    [answerData, type]
   );
 
   return values;
