@@ -1,14 +1,14 @@
-type loopType = <T>(times: number, callback: (index: number) => T) => T[];
+type LoopType = <T>(times: number, callback: (index: number) => T) => T[];
 
-export const loop: loopType = (times, callback) =>
+export const loop: LoopType = (times, callback) =>
   new Array(times).fill(0).map((_, index) => callback.call({}, index));
 
-type findAllIndexesType = <T>(
+type FindAllIndexesType = <T>(
   arr: T[],
   callback: (item: T, index?: number) => boolean
 ) => number[];
 
-export const findAllIndexes: findAllIndexesType = (arr, callback) =>
+export const findAllIndexes: FindAllIndexesType = (arr, callback) =>
   arr.reduce((acc, item, index) => {
     if (callback.call({}, item, index)) {
       acc.push(index);
@@ -16,9 +16,9 @@ export const findAllIndexes: findAllIndexesType = (arr, callback) =>
     return acc;
   }, []);
 
-type padZeroType = (str: string, maxLength: number) => string;
+type PadZeroType = (str: string, maxLength: number) => string;
 
-export const padZero: padZeroType = (str, maxLength) => {
+export const padZero: PadZeroType = (str, maxLength) => {
   const zeroCount = str.length - maxLength;
 
   if (zeroCount > 0) {
