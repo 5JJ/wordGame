@@ -21,7 +21,7 @@ import useAnswer from "hooks/useAnswer";
 import { findAllIndexes } from "utils/common";
 
 import QwetyKeyboard from "components/QwetyKeyboard";
-import { keycapType } from "components/QwetyKeyboard/QwetyKeyboard.types";
+import { keycapType } from "components/QwetyKeyboard/types";
 import HangmanDrawing from "components/HangmanDrawing";
 import { Alphabet, Alphabets, WordBlockList, LeftCount } from "./styles";
 import { AlphabetStatusList } from "./types";
@@ -150,7 +150,12 @@ export default function HangMan() {
           />
         ))}
       </WordBlockList>
-      <QwetyKeyboard freeze={!!result} onKeyInputCallback={onKeyClick} />
+      <QwetyKeyboard
+        freeze={!!result}
+        onKeyInputCallback={onKeyClick}
+        hideBackSpaceKey
+        hideEnterKey
+      />
       <LeftCount>{`Left Count : ${
         MAX_TRY_COUNT - tryCount.current
       }`}</LeftCount>

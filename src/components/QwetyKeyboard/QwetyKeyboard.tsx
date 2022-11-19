@@ -1,12 +1,14 @@
 import React from "react";
-import styled from "styled-components";
 
 import { KEY_BACKSPACE, KEY_ENTER } from "constants/common";
 
-import QwetyKeyboardType, {
-  onClickFnType,
-  keycapType,
-} from "./QwetyKeyboard.types";
+import type { QwetyKeyboardProps, onClickFnType, keycapType } from "./types";
+import {
+  BackSpaceKeycap,
+  KeyboardContainer,
+  Keycap,
+  EnterKeycap,
+} from "./styles";
 
 const QWETY_ALPHABETS = [
   ["ㅂ", "ㅈ", "ㄷ", "ㄱ", "ㅅ", "ㅛ", "ㅕ", "ㅑ"],
@@ -14,46 +16,8 @@ const QWETY_ALPHABETS = [
   ["ㅋ", "ㅌ", "ㅊ", "ㅍ", "ㅠ", "ㅜ", "ㅡ"],
 ];
 
-const Keycap = styled.button(({}) => ({
-  margin: "1px",
-  display: "inline-block",
-  width: "30px",
-  height: "32px",
-  verticalAlign: "middle",
-  textAlign: "center",
-  lineHeight: "32px",
-  fontSize: "13px",
-  fontWeight: "600",
-  cursor: "pointer",
-  backgroundColor: "lightgrey",
-
-  "&:disabled": {
-    color: "inherit",
-  },
-}));
-
-const backgroundCSS = {
-  backgroundSize: "60%",
-  backgroundRepeat: "no-repeat",
-  backgroundPosition: "center",
-};
-
-const BackSpaceKeycap = styled(Keycap)(({}) => ({
-  backgroundImage: 'url("./icons/backspace.png")',
-  ...backgroundCSS,
-}));
-
-const EnterKeycap = styled(Keycap)(({}) => ({
-  backgroundImage: 'url("./icons/enter.png")',
-  ...backgroundCSS,
-}));
-
-const KeyboardContainer = styled.div(({}) => ({
-  textAlign: "center",
-}));
-
-function QwetyKeyboard(props: QwetyKeyboardType) {
-  const { onKeyInputCallback, freeze } = props;
+const QwetyKeyboard = (props: QwetyKeyboardProps) => {
+  const { onKeyInputCallback, freeze, hideBackSpaceKey, hideEnterKey } = props;
 
   const handleClick: onClickFnType = (value) => {
     onKeyInputCallback(value);
@@ -63,7 +27,7 @@ function QwetyKeyboard(props: QwetyKeyboardType) {
     <KeyboardContainer>
       {QWETY_ALPHABETS.map((alphabetList, index) => (
         <div key={index}>
-          {index === 2 && (
+          {!hideBackSpaceKey && index === 2 && (
             <BackSpaceKeycap
               type="button"
               tabIndex={0}
@@ -82,7 +46,7 @@ function QwetyKeyboard(props: QwetyKeyboardType) {
               {alphabet}
             </Keycap>
           ))}
-          {index === 2 && (
+          {!hideEnterKey && index === 2 && (
             <EnterKeycap
               type="button"
               tabIndex={0}
@@ -94,6 +58,6 @@ function QwetyKeyboard(props: QwetyKeyboardType) {
       ))}
     </KeyboardContainer>
   );
-}
+};
 
 export default QwetyKeyboard;
