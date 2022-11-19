@@ -1,33 +1,10 @@
-import React, { useEffect, useRef, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import styled from "styled-components";
+import React, { useEffect, useRef } from "react";
+import { useNavigate } from "react-router-dom";
 
-import { MenuListProps, MenuListItemProps } from "./Menu.types";
+import type { MenuListProps } from "../../types";
+import { MenuListItem, StyledLink } from "./styles";
 
-const MenuListItem = styled.li<MenuListItemProps>(({ isSelected }) => ({
-  textAlign: "center",
-  padding: "5px",
-  fontSize: "16px",
-  fontWeight: "600",
-
-  ...(isSelected && {
-    color: "grey",
-    backgroundImage: 'url("./icons/caret-left.png")',
-    backgroundRepeat: "no-repeat",
-    backgroundSize: "12px",
-    backgroundPosition: "calc(50% + 24px)",
-  }),
-  "&:focus": {
-    backgroundColor: "#ddd",
-  },
-}));
-
-const StyledLink = styled(Link)(({}) => ({
-  display: "inline-block",
-  width: "100%",
-}));
-
-function MenuList(props: MenuListProps) {
+const MenuList = (props: MenuListProps) => {
   const { menuList, selectedItem, callbackAfterRendering, closeList } = props;
   const focusedItemRef = useRef<HTMLLIElement>(null);
   const navigate = useNavigate();
@@ -100,9 +77,9 @@ function MenuList(props: MenuListProps) {
       })}
     </>
   );
-}
+};
 
-function areEqual(prevProps: MenuListProps, nextProps: MenuListProps): boolean {
+function isEqual(prevProps: MenuListProps, nextProps: MenuListProps): boolean {
   return (
     prevProps.menuList === nextProps.menuList &&
     prevProps.selectedItem === nextProps.selectedItem &&
@@ -110,4 +87,4 @@ function areEqual(prevProps: MenuListProps, nextProps: MenuListProps): boolean {
   );
 }
 
-export default React.memo(MenuList, areEqual);
+export default React.memo(MenuList, isEqual);

@@ -1,40 +1,14 @@
 import useClickOutside from "hooks/useClickOutside";
 import React, { useState, useMemo, useCallback, useEffect } from "react";
-import styled from "styled-components";
 
-import MenuProps from "./Menu.types";
+import type { MenuProps } from "./types";
 
-import MenuList from "./MenuList";
-
-const MenuListContainer = styled.ul<{ isListRendered: boolean }>`
-  position: absolute;
-  top: 0;
-  z-index: 100;
-  transition: transform 0.4s ease-in-out;
-  transform: scaleY(${(props) => (props.isListRendered ? "1" : "0")});
-  width: 80%;
-  box-shadow: 1px 2px 5px 0px grey;
-  background-color: white;
-`;
-
-const MenuContainer = styled.div(({}) => ({
-  paddingBottom: 8,
-  position: "relative",
-  cursor: "pointer",
-}));
-
-const SelectedItem = styled.span(({}) => ({
-  paddingLeft: 8,
-  paddingRight: 20,
-  fontWeight: "bold",
-  fontSize: "20px",
-  backgroundImage: 'url("./icons/caret-down.png")',
-  backgroundRepeat: "no-repeat",
-  backgroundPosition: "right",
-  backgroundSize: "10px",
-}));
+import MenuList from "./components/menuList";
+import { MenuContainer, MenuListContainer, SelectedItem } from "./styles";
 
 function Menu(props: MenuProps) {
+  const { selectedItem, menuList } = props;
+
   const [toggled, setToggled] = useState<boolean>(false);
   const [listRendered, setListRendered] = useState<boolean>(false);
 
@@ -42,8 +16,6 @@ function Menu(props: MenuProps) {
     setToggled(false);
   }, []);
   const ref = useClickOutside<HTMLDivElement>(callbackMemo);
-
-  const { selectedItem, menuList } = props;
 
   function toggleList() {
     setToggled(!toggled);
