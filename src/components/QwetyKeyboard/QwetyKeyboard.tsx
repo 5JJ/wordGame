@@ -18,7 +18,13 @@ const QWETY_ALPHABETS = [
 ];
 
 const QwetyKeyboard = (props: QwetyKeyboardProps) => {
-  const { onKeyInputCallback, freeze, hideBackSpaceKey, hideEnterKey } = props;
+  const {
+    onKeyInputCallback,
+    freeze,
+    hideBackSpaceKey,
+    hideEnterKey,
+    keyStatus = {},
+  } = props;
 
   const handleClick: onClickFnType = (value) => {
     onKeyInputCallback(value);
@@ -43,6 +49,7 @@ const QwetyKeyboard = (props: QwetyKeyboardProps) => {
               key={alphabet}
               onClick={() => handleClick(alphabet)}
               disabled={freeze}
+              status={keyStatus[alphabet]}
             >
               {alphabet}
             </Keycap>

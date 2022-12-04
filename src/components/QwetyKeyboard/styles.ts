@@ -1,4 +1,5 @@
 import styled from "styled-components";
+import { Status } from "./types";
 
 export const KeyboardContainer = styled.div(({}) => ({
   textAlign: "center",
@@ -9,7 +10,7 @@ export const KeyboardLineContainer = styled.div(({}) => ({
   justifyContent: "center",
 }));
 
-export const Keycap = styled.button(({}) => ({
+export const Keycap = styled.button<{ status?: Status }>(({ status }) => ({
   margin: "1px",
   display: "inline-block",
   width: "30px",
@@ -25,6 +26,10 @@ export const Keycap = styled.button(({}) => ({
   "&:disabled": {
     color: "inherit",
   },
+
+  ...(status && {
+    backgroundColor: status === "correct" ? "green" : "red",
+  }),
 }));
 
 export const backgroundCSS = {

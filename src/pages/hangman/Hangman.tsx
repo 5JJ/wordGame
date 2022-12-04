@@ -12,8 +12,6 @@ import {
   GAME_HANGMAN,
   KEY_ENTER,
   KEY_BACKSPACE,
-  KR_CONSONANTS,
-  KR_VOWELS,
   BLOCK_RESULT,
 } from "constants/common";
 import WordBlock from "components/WordBlock";
@@ -21,10 +19,9 @@ import useAnswer from "hooks/useAnswer";
 import { findAllIndexes } from "utils/common";
 
 import QwetyKeyboard from "components/QwetyKeyboard";
-import { keycapType } from "components/QwetyKeyboard/types";
+import type { keycapType, KeyStatus } from "components/QwetyKeyboard/types";
 import HangmanDrawing from "components/HangmanDrawing";
-import { Alphabet, Alphabets, WordBlockList, LeftCount } from "./styles";
-import { AlphabetStatusList } from "./types";
+import { WordBlockList, LeftCount } from "./styles";
 
 const MAX_TRY_COUNT = 7;
 
@@ -34,7 +31,7 @@ export default function HangMan() {
   const [values, setValues] = useState<string[]>(() =>
     setValuesWithAlphabetStatus()
   );
-  const [alphabetStatus, setAlphabetStatus] = useState<AlphabetStatusList>(log);
+  const [alphabetStatus, setAlphabetStatus] = useState<KeyStatus>(log);
   const tryCount = useRef<number>(
     Object.values(log).filter((status) => status === "miscorrect").length
   );
@@ -123,19 +120,6 @@ export default function HangMan() {
     <>
       <Menu selectedItem={GAME_HANGMAN} menuList={gameList} />
       <HangmanDrawing tryCount={tryCount.current} />
-
-      <Alphabets>
-        {KR_CONSONANTS.map((value) => (
-          <Alphabet key={value} status={alphabetStatus[value] || "unused"}>
-            {value}
-          </Alphabet>
-        ))}
-        {KR_VOWELS.map((value) => (
-          <Alphabet key={value} status={alphabetStatus[value] || "unused"}>
-            {value}
-          </Alphabet>
-        ))}
-      </Alphabets>
       <WordBlockList>
         {values.map((value, index) => (
           <WordBlock
@@ -157,6 +141,7 @@ export default function HangMan() {
       <QwetyKeyboard
         freeze={!!result}
         onKeyInputCallback={onKeyClick}
+        keyStatus={alphabetStatus}
         hideBackSpaceKey
         hideEnterKey
       />

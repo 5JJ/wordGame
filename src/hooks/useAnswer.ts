@@ -9,14 +9,17 @@ import { useMemo, useState } from "react";
 import KordleAnswers from "data/kordle_answers.json";
 import HangmanAnswers from "data/hangman_answer.json";
 
-import type { AlphabetStatusList } from "pages/hangman/types";
-
 const KEY_ANSWER = "answer";
 const START_DATE = "2022/06/18";
 const START_DATE_TIME = new Date(START_DATE).getTime();
 
 type KordleLogType = string[][];
-type HangmanLogType = AlphabetStatusList;
+type HangmanLogType = {
+  [key in typeof KR_CONSONANTS[number] | typeof KR_VOWELS[number]]?:
+    | "miscorrect"
+    | "correct"
+    | "unused";
+};
 type ResultType = "success" | "failed";
 
 type LogType<T extends AnswerType> = T extends "kordle"
