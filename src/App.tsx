@@ -8,24 +8,29 @@ import HangMan from "pages/hangman";
 import MyScore from "pages/MyScore";
 
 const Container = styled.div(({}) => ({
-  margin: "30px auto 0",
   padding: "10px",
-  width: "80vh",
-  maxWidth: "500px",
+  overflow: "hidden",
+}));
+
+const Wrapper = styled.div(({}) => ({
+  margin: "30px auto 0",
+  maxWidth: "400px",
   minWidth: "250px",
 }));
 
 export default function App() {
   return (
     <Container>
-      <Router>
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/kordle" element={<Kordle />} />
-          <Route path="/hangman" element={<HangMan />} />
-          <Route path="/myscore" element={<MyScore />} />
-        </Routes>
-      </Router>
+      <Wrapper>
+        <Router>
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/kordle" element={<Kordle />} />
+            <Route path="/hangman" element={<HangMan />} />
+            <Route path="/myscore" element={<MyScore />} />
+          </Routes>
+        </Router>
+      </Wrapper>
     </Container>
   );
 }

@@ -3,6 +3,8 @@ import { AlphabetStatusType } from "./types";
 
 export const WordBlockList = styled.div(({}) => ({
   textAlign: "center",
+  display: "flex",
+  justifyContent: "center",
 }));
 
 export const Alphabets = styled.ul(({}) => ({

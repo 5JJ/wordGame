@@ -21,7 +21,10 @@ type valueType = string[][];
 const DEFAULT_BLOCK_ROW_COUNT = 6;
 const DEFAULT_BLOCK_COLUMN_COUNT = 6;
 
-const WordBlockList = styled.div(({}) => ({}));
+const WordBlockList = styled.div(({}) => ({
+  display: "flex",
+  justifyContent: "center",
+}));
 const WordBlockContainer = styled.div(({}) => ({
   textAlign: "center",
 }));

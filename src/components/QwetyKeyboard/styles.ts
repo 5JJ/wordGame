@@ -1,5 +1,14 @@
 import styled from "styled-components";
 
+export const KeyboardContainer = styled.div(({}) => ({
+  textAlign: "center",
+}));
+
+export const KeyboardLineContainer = styled.div(({}) => ({
+  display: "flex",
+  justifyContent: "center",
+}));
+
 export const Keycap = styled.button(({}) => ({
   margin: "1px",
   display: "inline-block",
@@ -32,8 +41,4 @@ export const BackSpaceKeycap = styled(Keycap)(({}) => ({
 export const EnterKeycap = styled(Keycap)(({}) => ({
   backgroundImage: 'url("./icons/enter.png")',
   ...backgroundCSS,
-}));
-
-export const KeyboardContainer = styled.div(({}) => ({
-  textAlign: "center",
 }));

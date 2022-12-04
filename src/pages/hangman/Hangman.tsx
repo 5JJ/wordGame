@@ -123,6 +123,7 @@ export default function HangMan() {
     <>
       <Menu selectedItem={GAME_HANGMAN} menuList={gameList} />
       <HangmanDrawing tryCount={tryCount.current} />
+
       <Alphabets>
         {KR_CONSONANTS.map((value) => (
           <Alphabet key={value} status={alphabetStatus[value] || "unused"}>
@@ -150,15 +151,15 @@ export default function HangMan() {
           />
         ))}
       </WordBlockList>
+      <LeftCount>{`(Left Count : ${
+        MAX_TRY_COUNT - tryCount.current
+      })`}</LeftCount>
       <QwetyKeyboard
         freeze={!!result}
         onKeyInputCallback={onKeyClick}
         hideBackSpaceKey
         hideEnterKey
       />
-      <LeftCount>{`Left Count : ${
-        MAX_TRY_COUNT - tryCount.current
-      }`}</LeftCount>
     </>
   );
 }

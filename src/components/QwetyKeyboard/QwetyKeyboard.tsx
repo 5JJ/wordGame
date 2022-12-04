@@ -4,6 +4,7 @@ import { KEY_BACKSPACE, KEY_ENTER } from "constants/common";
 
 import type { QwetyKeyboardProps, onClickFnType, keycapType } from "./types";
 import {
+  KeyboardLineContainer,
   BackSpaceKeycap,
   KeyboardContainer,
   Keycap,
@@ -26,7 +27,7 @@ const QwetyKeyboard = (props: QwetyKeyboardProps) => {
   return (
     <KeyboardContainer>
       {QWETY_ALPHABETS.map((alphabetList, index) => (
-        <div key={index}>
+        <KeyboardLineContainer key={index}>
           {!hideBackSpaceKey && index === 2 && (
             <BackSpaceKeycap
               type="button"
@@ -54,7 +55,7 @@ const QwetyKeyboard = (props: QwetyKeyboardProps) => {
               disabled={freeze}
             ></EnterKeycap>
           )}
-        </div>
+        </KeyboardLineContainer>
       ))}
     </KeyboardContainer>
   );
